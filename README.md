@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AD Scheduling
+
+Professional scheduling and business management for Anthony Detailing.
+
+## Features
+
+- 📅 Appointment scheduling with multiple status tracking
+- 👥 Customer profiles with vehicle information
+- 💰 Revenue dashboard with weekly/monthly analytics  
+- 📍 Lead tracker for door-knock outreach
+- 🔔 In-app notifications and reminders
+- 🌙 Dark mode & light mode
+- 📱 Mobile-first responsive design
+- 🔐 Google OAuth authentication
+
+## Tech Stack
+
+- **Framework**: Next.js 15 + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Animation**: Framer Motion
+- **Icons**: Lucide React
+- **Forms**: React Hook Form + Zod validation
+- **Database**: PostgreSQL with Prisma ORM
+- **Auth**: NextAuth v5
+- **Deployment**: Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
+- Node.js 18+ and npm
+- PostgreSQL database (Neon or Vercel Postgres)
+- Google OAuth credentials
+
+### Setup
+
+1. **Clone the repository**
+\`\`\`bash
+git clone https://github.com/yourusername/ad-scheduling.git
+cd ad-scheduling
+\`\`\`
+
+2. **Install dependencies**
+\`\`\`bash
+npm install
+\`\`\`
+
+3. **Set up environment variables**
+\`\`\`bash
+cp .env.local.example .env.local
+\`\`\`
+
+Then edit `.env.local` and add:
+- \`DATABASE_URL\` - Your PostgreSQL connection string
+- \`GOOGLE_CLIENT_ID\` - From Google Cloud Console
+- \`GOOGLE_CLIENT_SECRET\` - From Google Cloud Console
+- \`NEXTAUTH_SECRET\` - Generate with: \`openssl rand -base64 32\`
+- \`NEXTAUTH_URL\` - http://localhost:3000 for development
+
+4. **Set up database**
+\`\`\`bash
+npx prisma migrate dev --name init
+\`\`\`
+
+5. **Run development server**
+\`\`\`bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Using Neon (Recommended)
 
-## Learn More
+1. Create a free Neon account at https://neon.tech
+2. Create a new project
+3. Copy the connection string to \`DATABASE_URL\` in \`.env.local\`
+4. Run migrations
 
-To learn more about Next.js, take a look at the following resources:
+### Using Vercel Postgres
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Link your project to Vercel
+2. Add Postgres from the Vercel dashboard
+3. Copy connection string to \`.env.local\`
+4. Run migrations
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+### Deploy to Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Push to GitHub**
+\`\`\`bash
+git add .
+git commit -m "Initial commit"
+git push origin main
+\`\`\`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Connect to Vercel**
+- Go to [https://vercel.com](https://vercel.com)
+- Import your GitHub repository
+- Add environment variables in Project Settings
+- Deploy!
+
+3. **Set up production database**
+- Create a Neon or Vercel Postgres database
+- Add \`DATABASE_URL\` to production environment variables
+- Run migrations: \`npx prisma migrate deploy\`
+
+## License
+
+MIT
