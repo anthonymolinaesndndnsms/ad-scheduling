@@ -20,8 +20,8 @@ Professional scheduling and business management for Anthony Detailing.
 - **Animation**: Framer Motion
 - **Icons**: Lucide React
 - **Forms**: React Hook Form + Zod validation
-- **Database**: PostgreSQL with Prisma ORM
-- **Auth**: NextAuth v5
+- **Database**: Supabase (PostgreSQL) with Prisma ORM
+- **Auth**: NextAuth v5 + Supabase Auth
 - **Deployment**: Vercel
 
 ## Getting Started
@@ -29,7 +29,7 @@ Professional scheduling and business management for Anthony Detailing.
 ### Prerequisites
 
 - Node.js 18+ and npm
-- PostgreSQL database (Neon or Vercel Postgres)
+- Supabase account (free at https://supabase.com)
 - Google OAuth credentials
 
 ### Setup
@@ -51,7 +51,7 @@ cp .env.local.example .env.local
 \`\`\`
 
 Then edit `.env.local` and add:
-- \`DATABASE_URL\` - Your PostgreSQL connection string
+- \`DATABASE_URL\` - From Supabase project settings
 - \`GOOGLE_CLIENT_ID\` - From Google Cloud Console
 - \`GOOGLE_CLIENT_SECRET\` - From Google Cloud Console
 - \`NEXTAUTH_SECRET\` - Generate with: \`openssl rand -base64 32\`
@@ -71,19 +71,21 @@ Open [http://localhost:3000](http://localhost:3000) to see the app.
 
 ## Database Setup
 
-### Using Neon (Recommended)
+### Using Supabase (Recommended)
 
-1. Create a free Neon account at https://neon.tech
-2. Create a new project
-3. Copy the connection string to \`DATABASE_URL\` in \`.env.local\`
-4. Run migrations
+1. Create a free Supabase account at https://supabase.com
+2. Create a new project and wait for provisioning
+3. Go to Project Settings → Database
+4. Copy the PostgreSQL connection URI
+5. Add to \`DATABASE_URL\` in \`.env.local\`
+6. Run: \`npx prisma migrate dev --name init\`
 
-### Using Vercel Postgres
-
-1. Link your project to Vercel
-2. Add Postgres from the Vercel dashboard
-3. Copy connection string to \`.env.local\`
-4. Run migrations
+**Supabase Benefits:**
+- Free PostgreSQL database
+- Built-in authentication (optional to use alongside NextAuth)
+- Real-time subscriptions for future features
+- Simple dashboard for data management
+- Easy Vercel integration via Marketplace
 
 ## Deployment
 

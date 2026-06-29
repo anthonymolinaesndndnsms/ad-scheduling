@@ -9,21 +9,25 @@
 
 ## Next Steps to Go Live
 
-### 1. Set Up Database
+### 1. Set Up Supabase Database
 
-Choose one:
+1. **Create Supabase Project**
+   - Go to https://supabase.com
+   - Sign up (free) or log in
+   - Create a new project
+   - Choose a region close to you
+   - Wait for provisioning (~2 min)
 
-**Option A: Neon (Recommended)**
-- Go to https://neon.tech
-- Create a free account
-- Create a new project
-- Copy the connection string
+2. **Get Connection String**
+   - Go to Project Settings → Database
+   - Copy the connection string (PostgreSQL URI)
+   - Keep this safe!
 
-**Option B: Vercel Postgres**
-- In Vercel Dashboard → Project Settings
-- Go to Storage
-- Create a Postgres database
-- Connection string will be auto-added
+3. **Connect to Supabase via Vercel Marketplace (Optional but Recommended)**
+   - In Vercel Dashboard → Project Settings → Integrations
+   - Search for Supabase
+   - Click "Add Integration"
+   - Connection string will auto-populate
 
 ### 2. Add Environment Variables to Vercel
 
