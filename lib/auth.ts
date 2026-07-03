@@ -4,28 +4,52 @@ import GoogleProvider from 'next-auth/providers/google'
 import { compare } from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 
+/** Turn arbitrary text into a valid username seed (a-z, 0-9, underscore). */
+function usernameSeed(input: string): string {
+  const base = input.toLowerCase().replace(/[^a-z0-9_.]/g, '').replace(/^[._]+|[._]+$/g, '')
+  return base.length >= 3 ? base : `user${base}`
+}
+
+/** Find a free username derived from `seed`, appending numbers on collisions. */
+async function uniqueUsername(seed: string): Promise<string> {
+  const base = usernameSeed(seed)
+  let candidate = base
+  let n = 1
+  // Bounded loop — practically resolves within a couple of tries.
+  while (await prisma.user.findUnique({ where: { username: candidate } })) {
+    candidate = `${base}${n++}`
+  }
+  return candidate
+}
+
 export const authOptions: NextAuthOptions = {
   session: { strategy: 'jwt' },
   pages: { signIn: '/login' },
   providers: [
     CredentialsProvider({
-      name: 'Email and password',
+      name: 'Username and password',
       credentials: {
-        email: { label: 'Email', type: 'email' },
+        username: { label: 'Username', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const email = credentials?.email?.toLowerCase().trim()
+        const username = credentials?.username?.toLowerCase().trim()
         const password = credentials?.password
-        if (!email || !password) return null
+        if (!username || !password) return null
 
-        const user = await prisma.user.findUnique({ where: { email } })
+        const user = await prisma.user.findUnique({ where: { username } })
         if (!user || !user.passwordHash || !user.active) return null
 
         const valid = await compare(password, user.passwordHash)
         if (!valid) return null
 
-        return { id: user.id, email: user.email, name: user.name, image: user.image }
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          username: user.username,
+        }
       },
     }),
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
@@ -51,6 +75,7 @@ export const authOptions: NextAuthOptions = {
           data: {
             email,
             name: user.name ?? email,
+            username: await uniqueUsername(email.split('@')[0] || user.name || 'user'),
             image: user.image,
             role: isFirstUser ? 'ADMIN' : 'EMPLOYEE',
           },
@@ -58,16 +83,31 @@ export const authOptions: NextAuthOptions = {
       }
       return true
     },
-    async jwt({ token }) {
-      if (token.email) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: token.email.toLowerCase() },
-        })
+    async jwt({ token, user }) {
+      // Resolve our DB user id once at sign-in, then refresh from it each call.
+      // (For Google, `user.id` is Google's id, so fall back to an email lookup.)
+      let uid = (token.uid as string | undefined) ?? undefined
+      if (user) {
+        if ((user as { username?: string }).username) {
+          uid = user.id
+        } else if (user.email) {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: user.email.toLowerCase() },
+            select: { id: true },
+          })
+          uid = dbUser?.id
+        }
+      }
+
+      if (uid) {
+        const dbUser = await prisma.user.findUnique({ where: { id: uid } })
         if (dbUser) {
-          token.id = dbUser.id
+          token.uid = dbUser.id
+          token.username = dbUser.username
           token.role = dbUser.role
           token.active = dbUser.active
           token.name = dbUser.name
+          token.email = dbUser.email
           token.picture = dbUser.image ?? token.picture
         }
       }
@@ -75,7 +115,8 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string
+        session.user.id = token.uid as string
+        session.user.username = (token.username as string) ?? ''
         session.user.role = (token.role as 'ADMIN' | 'EMPLOYEE') ?? 'EMPLOYEE'
         session.user.active = (token.active as boolean) ?? false
       }

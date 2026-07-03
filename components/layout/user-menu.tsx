@@ -44,7 +44,7 @@ export function UserMenu({ user }: { user: SessionUser }) {
         <DropdownMenuLabel>
           <div className="space-y-1">
             <p className="truncate text-sm font-medium">{user.name}</p>
-            <p className="truncate text-xs font-normal text-muted-foreground">{user.email}</p>
+            <p className="truncate text-xs font-normal text-muted-foreground">@{user.username}</p>
             <Badge variant="outline" className="mt-1 text-[10px]">
               {user.role === 'ADMIN' ? 'Owner' : 'Employee'}
             </Badge>

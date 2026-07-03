@@ -85,7 +85,7 @@ export function Sidebar({ user }: { user: SessionUser }) {
       {/* User footer */}
       <div className="border-t border-border p-4">
         <p className="truncate text-sm font-medium">{user.name}</p>
-        <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+        <p className="truncate text-xs text-muted-foreground">@{user.username}</p>
         <button
           onClick={() => signOut({ callbackUrl: '/login' })}
           className="mt-3 flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"

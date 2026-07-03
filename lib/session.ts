@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 
 export type SessionUser = {
   id: string
+  username: string
   role: 'ADMIN' | 'EMPLOYEE'
   active: boolean
   name?: string | null

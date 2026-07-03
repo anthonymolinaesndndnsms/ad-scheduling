@@ -123,7 +123,10 @@ export default async function EmployeeProfilePage({
                 <Badge variant="outline">{ROLE_LABELS[employee.role]}</Badge>
                 {!employee.active && <Badge variant="outline" className="text-muted-foreground">Inactive</Badge>}
               </div>
-              <p className="text-sm text-muted-foreground">{employee.email}</p>
+              <p className="text-sm text-muted-foreground">
+                @{employee.username}
+                {employee.email ? ` · ${employee.email}` : ''}
+              </p>
               <p className="text-sm text-muted-foreground">
                 Member since {format(employee.createdAt, 'MMM yyyy')}
               </p>

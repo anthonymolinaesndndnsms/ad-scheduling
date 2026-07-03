@@ -129,6 +129,7 @@ export async function globalSearch(query: string): Promise<SearchResults> {
         where: {
           OR: [
             { name: contains(q) },
+            { username: contains(q) },
             { email: contains(q) },
             { phone: contains(q) },
           ],
@@ -138,6 +139,7 @@ export async function globalSearch(query: string): Promise<SearchResults> {
         select: {
           id: true,
           name: true,
+          username: true,
           email: true,
           role: true,
         },
@@ -187,7 +189,7 @@ export async function globalSearch(query: string): Promise<SearchResults> {
       employees: employees.map((e) => ({
         id: e.id,
         label: e.name,
-        sublabel: [e.email, e.role === 'ADMIN' ? 'Owner' : 'Employee']
+        sublabel: [`@${e.username}`, e.role === 'ADMIN' ? 'Owner' : 'Employee']
           .filter(Boolean)
           .join(' · '),
         href: `/employees/${e.id}`,

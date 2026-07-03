@@ -141,7 +141,8 @@ export default async function EmployeesPage() {
                           <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                         </div>
                         <p className="truncate text-xs text-muted-foreground">
-                          {user.email}
+                          @{user.username}
+                          {user.email ? ` · ${user.email}` : ''}
                         </p>
                         <div className="mt-2 flex flex-wrap items-center gap-1.5">
                           <Badge variant="outline">
