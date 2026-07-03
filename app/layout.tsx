@@ -16,7 +16,13 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Kids Next Door',
+  metadataBase: new URL(
+    process.env.NEXTAUTH_URL ?? 'http://localhost:3000'
+  ),
+  title: {
+    default: 'Kids Next Door',
+    template: '%s · Kids Next Door',
+  },
   description: 'Team job management for neighborhood services — jobs, payouts, and scheduling',
 }
 

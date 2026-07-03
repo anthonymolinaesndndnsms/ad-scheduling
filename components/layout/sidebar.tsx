@@ -17,6 +17,7 @@ import {
   UsersRound,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Logo } from '@/components/brand/logo'
 import type { SessionUser } from '@/lib/session'
 
 const ADMIN_NAV = [
@@ -48,9 +49,7 @@ export function Sidebar({ user }: { user: SessionUser }) {
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       {/* Brand */}
       <div className="flex items-center gap-3 px-6 pt-6 pb-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-bold tracking-tight">
-          KND
-        </div>
+        <Logo size={36} />
         <div className="leading-tight">
           <p className="font-semibold">Kids Next Door</p>
           <p className="text-xs text-muted-foreground">

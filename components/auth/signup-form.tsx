@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Logo } from '@/components/brand/logo'
 
 export function SignupForm() {
   const router = useRouter()
@@ -51,9 +52,7 @@ export function SignupForm() {
   return (
     <Card className="rounded-2xl">
       <CardHeader className="items-center text-center">
-        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground text-sm font-bold">
-          KND
-        </div>
+        <Logo size={56} rounded="rounded-2xl" className="mx-auto mb-2" />
         <CardTitle className="text-xl">Join Kids Next Door</CardTitle>
         <CardDescription>Create your team account to see your jobs and earnings</CardDescription>
       </CardHeader>
