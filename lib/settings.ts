@@ -14,25 +14,34 @@ export const DEFAULT_SERVICES = [
 /**
  * Fetch the singleton business settings row, creating it (and the default
  * service types) on first use so a fresh database self-seeds.
+ *
+ * This is called on many pages, so the steady-state path is a single plain
+ * read (no write, no extra count query) — the upsert/seed only runs once,
+ * the very first time the app is ever used against an empty database.
  */
 export async function getSettings() {
-  const settings = await prisma.settings.upsert({
-    where: { id: 'singleton' },
-    update: {},
-    create: { id: 'singleton' },
-  })
+  const existing = await prisma.settings.findUnique({ where: { id: 'singleton' } })
+  if (existing) return existing
 
-  const serviceCount = await prisma.serviceType.count()
-  if (serviceCount === 0) {
-    await prisma.serviceType.createMany({
-      data: DEFAULT_SERVICES.map((s) => ({
-        name: s.name,
-        color: s.color,
-        defaultPriceCents: s.defaultPriceCents,
-        defaultDurationMins: s.defaultDurationMins,
-      })),
-    })
+  // First-ever load against this database: bootstrap the singleton row and
+  // the default service types together. Guard against two concurrent
+  // requests both hitting the empty-database path at once.
+  try {
+    const [settings] = await Promise.all([
+      prisma.settings.create({ data: { id: 'singleton' } }),
+      prisma.serviceType.createMany({
+        data: DEFAULT_SERVICES.map((s) => ({
+          name: s.name,
+          color: s.color,
+          defaultPriceCents: s.defaultPriceCents,
+          defaultDurationMins: s.defaultDurationMins,
+        })),
+        skipDuplicates: true,
+      }),
+    ])
+    return settings
+  } catch {
+    // Another request won the race and created it first — just read it.
+    return prisma.settings.findUniqueOrThrow({ where: { id: 'singleton' } })
   }
-
-  return settings
 }

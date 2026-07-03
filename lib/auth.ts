@@ -84,10 +84,19 @@ export const authOptions: NextAuthOptions = {
       return true
     },
     async jwt({ token, user }) {
-      // Resolve our DB user id once at sign-in, then refresh from it each call.
-      // (For Google, `user.id` is Google's id, so fall back to an email lookup.)
-      let uid = (token.uid as string | undefined) ?? undefined
+      // IMPORTANT: this callback runs on every server-side session read (every
+      // page navigation calls requireUser/requireAdmin -> getServerSession ->
+      // jwt()), not just at sign-in. Querying the database unconditionally here
+      // added a full DB round trip to every single navigation, which is what
+      // caused the multi-second tab-switch lag. We now only hit the database
+      // at sign-in and periodically after that (every REFRESH_MS), trusting the
+      // token the rest of the time.
+      const REFRESH_MS = 5 * 60 * 1000 // 5 minutes
+
       if (user) {
+        // Fresh sign-in: resolve our DB user id.
+        // (For Google, `user.id` is Google's id, so fall back to an email lookup.)
+        let uid: string | undefined
         if ((user as { username?: string }).username) {
           uid = user.id
         } else if (user.email) {
@@ -97,20 +106,43 @@ export const authOptions: NextAuthOptions = {
           })
           uid = dbUser?.id
         }
+
+        if (uid) {
+          const dbUser = await prisma.user.findUnique({ where: { id: uid } })
+          if (dbUser) {
+            token.uid = dbUser.id
+            token.username = dbUser.username
+            token.role = dbUser.role
+            token.active = dbUser.active
+            token.name = dbUser.name
+            token.email = dbUser.email
+            token.picture = dbUser.image ?? token.picture
+            token.refreshedAt = Date.now()
+          }
+        }
+        return token
       }
 
-      if (uid) {
-        const dbUser = await prisma.user.findUnique({ where: { id: uid } })
+      // Subsequent reads: only re-check the database periodically, so role
+      // changes / deactivation still propagate within a few minutes without
+      // paying a DB query on every navigation.
+      const refreshedAt = (token.refreshedAt as number | undefined) ?? 0
+      const stale = Date.now() - refreshedAt > REFRESH_MS
+      if (stale && token.uid) {
+        const dbUser = await prisma.user.findUnique({ where: { id: token.uid as string } })
         if (dbUser) {
-          token.uid = dbUser.id
           token.username = dbUser.username
           token.role = dbUser.role
           token.active = dbUser.active
           token.name = dbUser.name
           token.email = dbUser.email
           token.picture = dbUser.image ?? token.picture
+        } else {
+          token.active = false
         }
+        token.refreshedAt = Date.now()
       }
+
       return token
     },
     async session({ session, token }) {

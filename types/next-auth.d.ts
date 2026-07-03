@@ -21,5 +21,7 @@ declare module 'next-auth/jwt' {
     username?: string
     role?: 'ADMIN' | 'EMPLOYEE'
     active?: boolean
+    /** Epoch ms this token was last refreshed from the database. */
+    refreshedAt?: number
   }
 }
