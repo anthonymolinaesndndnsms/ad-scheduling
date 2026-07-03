@@ -4,67 +4,94 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import {
-  Calendar,
-  Users,
   BarChart3,
-  Settings,
+  Bell,
+  Briefcase,
+  CalendarDays,
+  DollarSign,
+  Home,
   LogOut,
   MapPin,
-  Zap,
+  Settings,
+  Users,
+  UsersRound,
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import type { SessionUser } from '@/lib/session'
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: BarChart3 },
-  { href: '/appointments', label: 'Appointments', icon: Calendar },
+const ADMIN_NAV = [
+  { href: '/dashboard', label: 'Dashboard', icon: Home },
+  { href: '/jobs', label: 'Jobs', icon: Briefcase },
+  { href: '/calendar', label: 'Calendar', icon: CalendarDays },
+  { href: '/employees', label: 'Employees', icon: UsersRound },
+  { href: '/payouts', label: 'Payouts', icon: DollarSign },
   { href: '/customers', label: 'Customers', icon: Users },
   { href: '/leads', label: 'Leads', icon: MapPin },
+  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/notifications', label: 'Notifications', icon: Bell },
   { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
-export function Sidebar({ user }: { user: any }) {
+const EMPLOYEE_NAV = [
+  { href: '/dashboard', label: 'Dashboard', icon: Home },
+  { href: '/jobs', label: 'My Jobs', icon: Briefcase },
+  { href: '/calendar', label: 'Schedule', icon: CalendarDays },
+  { href: '/payouts', label: 'Earnings', icon: DollarSign },
+  { href: '/notifications', label: 'Notifications', icon: Bell },
+]
+
+export function Sidebar({ user }: { user: SessionUser }) {
   const pathname = usePathname()
+  const nav = user.role === 'ADMIN' ? ADMIN_NAV : EMPLOYEE_NAV
 
   return (
-    <div className="flex flex-col h-full p-6 bg-black border-r border-zinc-800">
-      {/* Logo */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">AD</h1>
-        <p className="text-xs text-zinc-400 mt-1">Scheduling</p>
+    <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
+      {/* Brand */}
+      <div className="flex items-center gap-3 px-6 pt-6 pb-5">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground text-sm font-bold tracking-tight">
+          KND
+        </div>
+        <div className="leading-tight">
+          <p className="font-semibold">Kids Next Door</p>
+          <p className="text-xs text-muted-foreground">
+            {user.role === 'ADMIN' ? 'Owner' : 'Team member'}
+          </p>
+        </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-2">
-        {navItems.map((item) => {
+      <nav className="flex-1 space-y-1 px-3 overflow-y-auto">
+        {nav.map((item) => {
           const Icon = item.icon
-          const isActive = pathname.startsWith(item.href)
+          const active =
+            pathname === item.href || pathname.startsWith(item.href + '/')
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive
-                  ? 'bg-blue-600 text-white'
-                  : 'text-zinc-400 hover:bg-zinc-900'
-              }`}
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                active
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+              )}
             >
-              <Icon className="w-4 h-4" />
-              <span className="text-sm font-medium">{item.label}</span>
+              <Icon className="h-4 w-4" />
+              {item.label}
             </Link>
           )
         })}
       </nav>
 
-      {/* User Section */}
-      <div className="border-t border-zinc-800 pt-4">
-        <div className="mb-4">
-          <p className="text-xs text-zinc-400 mb-1">Logged in as</p>
-          <p className="text-sm text-white truncate">{user?.email}</p>
-        </div>
+      {/* User footer */}
+      <div className="border-t border-border p-4">
+        <p className="truncate text-sm font-medium">{user.name}</p>
+        <p className="truncate text-xs text-muted-foreground">{user.email}</p>
         <button
           onClick={() => signOut({ callbackUrl: '/login' })}
-          className="w-full flex items-center gap-2 px-4 py-2 text-sm text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors"
+          className="mt-3 flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="h-4 w-4" />
           Sign out
         </button>
       </div>

@@ -1,114 +1,40 @@
-# AD Scheduling
+# Kids Next Door
 
-Professional scheduling and business management for Anthony Detailing.
+Team job management for neighborhood services — trash can cleaning, car washes, lawn mowing, pressure washing, and more. Manage employees, assign jobs, track cash collection, calculate 80/20 payouts, and see revenue analytics.
 
-## Features
+## Roles
 
-- 📅 Appointment scheduling with multiple status tracking
-- 👥 Customer profiles with vehicle information
-- 💰 Revenue dashboard with weekly/monthly analytics  
-- 📍 Lead tracker for door-knock outreach
-- 🔔 In-app notifications and reminders
-- 🌙 Dark mode & light mode
-- 📱 Mobile-first responsive design
-- 🔐 Google OAuth authentication
+- **Owner (admin)** — sees everything: all jobs, employees, payouts, customers, leads, analytics, settings. The **first account created becomes the owner**.
+- **Employee** — sees only their own assigned jobs, schedule, and earnings. Employees sign up at `/signup`.
 
-## Tech Stack
+## How money works
 
-- **Framework**: Next.js 15 + TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui
-- **Animation**: Framer Motion
-- **Icons**: Lucide React
-- **Forms**: React Hook Form + Zod validation
-- **Database**: Supabase (PostgreSQL) with Prisma ORM
-- **Auth**: NextAuth v5 + Supabase Auth
-- **Deployment**: Vercel
+- Employee split: **80%** of the job price (configurable in Settings)
+- Owner split: **20%**
+- **Tips go 100% to the employee** and never reduce the owner's cut
+- Cash collection (from the customer) and payouts (to the employee) are tracked separately
 
-## Getting Started
+## Tech stack
 
-### Prerequisites
+Next.js (App Router) · TypeScript · Tailwind CSS · shadcn/ui · Prisma · PostgreSQL (Supabase) · NextAuth · Recharts · Vercel
 
-- Node.js 18+ and npm
-- Supabase account (free at https://supabase.com)
-- Google OAuth credentials
+## Setup
 
-### Setup
+1. Install dependencies: `npm install`
+2. Copy env template: `cp .env.local.example .env.local` and fill in:
+   - `DATABASE_URL` — Supabase → Project Settings → Database → connection string
+   - `NEXTAUTH_SECRET` — `openssl rand -base64 32`
+   - `NEXTAUTH_URL` — `http://localhost:3000` for local dev
+   - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — optional
+3. Push the schema to your database: `npx prisma db push`
+4. Run: `npm run dev` and open http://localhost:3000
+5. Sign up at `/signup` — your first account becomes the owner
 
-1. **Clone the repository**
-\`\`\`bash
-git clone https://github.com/yourusername/ad-scheduling.git
-cd ad-scheduling
-\`\`\`
+Default services (trash can cleaning, car wash, lawn mowing, etc.) are seeded automatically on first use and are fully editable in Settings.
 
-2. **Install dependencies**
-\`\`\`bash
-npm install
-\`\`\`
+## Deploying to Vercel
 
-3. **Set up environment variables**
-\`\`\`bash
-cp .env.local.example .env.local
-\`\`\`
-
-Then edit `.env.local` and add:
-- \`DATABASE_URL\` - From Supabase project settings
-- \`GOOGLE_CLIENT_ID\` - From Google Cloud Console
-- \`GOOGLE_CLIENT_SECRET\` - From Google Cloud Console
-- \`NEXTAUTH_SECRET\` - Generate with: \`openssl rand -base64 32\`
-- \`NEXTAUTH_URL\` - http://localhost:3000 for development
-
-4. **Set up database**
-\`\`\`bash
-npx prisma migrate dev --name init
-\`\`\`
-
-5. **Run development server**
-\`\`\`bash
-npm run dev
-\`\`\`
-
-Open [http://localhost:3000](http://localhost:3000) to see the app.
-
-## Database Setup
-
-### Using Supabase (Recommended)
-
-1. Create a free Supabase account at https://supabase.com
-2. Create a new project and wait for provisioning
-3. Go to Project Settings → Database
-4. Copy the PostgreSQL connection URI
-5. Add to \`DATABASE_URL\` in \`.env.local\`
-6. Run: \`npx prisma migrate dev --name init\`
-
-**Supabase Benefits:**
-- Free PostgreSQL database
-- Built-in authentication (optional to use alongside NextAuth)
-- Real-time subscriptions for future features
-- Simple dashboard for data management
-- Easy Vercel integration via Marketplace
-
-## Deployment
-
-### Deploy to Vercel
-
-1. **Push to GitHub**
-\`\`\`bash
-git add .
-git commit -m "Initial commit"
-git push origin main
-\`\`\`
-
-2. **Connect to Vercel**
-- Go to [https://vercel.com](https://vercel.com)
-- Import your GitHub repository
-- Add environment variables in Project Settings
-- Deploy!
-
-3. **Set up production database**
-- Create a Neon or Vercel Postgres database
-- Add \`DATABASE_URL\` to production environment variables
-- Run migrations: \`npx prisma migrate deploy\`
-
-## License
-
-MIT
+1. Push to GitHub and import the repo in Vercel
+2. Add the same environment variables in Project Settings (set `NEXTAUTH_URL` to your production URL)
+3. Deploy — the build runs `prisma generate` automatically
+4. Run `npx prisma db push` once against the production `DATABASE_URL`

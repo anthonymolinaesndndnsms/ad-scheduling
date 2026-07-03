@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'AD Scheduling - Anthony Detailing',
-  description: 'Professional scheduling and business management for Anthony Detailing',
+  title: 'Kids Next Door',
+  description: 'Team job management for neighborhood services — jobs, payouts, and scheduling',
 }
 
 export default function RootLayout({
