@@ -39,8 +39,9 @@ export default async function NewJobPage({
         defaultDurationMins: true,
       },
     }),
+    // Any active team member is assignable, including the owner.
     prisma.user.findMany({
-      where: { active: true, role: 'EMPLOYEE' },
+      where: { active: true },
       orderBy: { name: 'asc' },
       select: { id: true, name: true },
     }),

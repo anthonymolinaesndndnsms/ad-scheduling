@@ -219,27 +219,32 @@ export function LeadsBoard({
   return (
     <div className="space-y-4">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-end gap-2">
         <Button onClick={openCreate} className="h-10">
           <Plus className="h-4 w-4" />
           Add lead
         </Button>
-        <Select
-          value={neighborhoodFilter}
-          onValueChange={(v) => setNeighborhoodFilter(v || 'ALL')}
-        >
-          <SelectTrigger className="h-10 w-44">
-            <SelectValue placeholder="All neighborhoods" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All neighborhoods</SelectItem>
-            {allNeighborhoods.map((n) => (
-              <SelectItem key={n} value={n}>
-                {n}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Neighborhood</Label>
+          <Select
+            value={neighborhoodFilter}
+            onValueChange={(v) => setNeighborhoodFilter(v || 'ALL')}
+          >
+            <SelectTrigger className="h-10 w-44">
+              <SelectValue placeholder="All neighborhoods">
+                {neighborhoodFilter !== 'ALL' ? neighborhoodFilter : 'All neighborhoods'}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All neighborhoods</SelectItem>
+              {allNeighborhoods.map((n) => (
+                <SelectItem key={n} value={n}>
+                  {n}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <Button
           variant={dueOnly ? 'default' : 'outline'}
           className="h-10"
@@ -309,8 +314,8 @@ export function LeadsBoard({
                     </div>
                     <div className="w-36 shrink-0">
                       <Select value={l.status} onValueChange={(v) => v && quickStatus(l.id, v as LeadStatus)}>
-                        <SelectTrigger className="h-8">
-                          <SelectValue />
+                        <SelectTrigger className="h-8" aria-label="Lead status">
+                          <SelectValue>{LEAD_STATUS_LABELS[l.status]}</SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           {STATUSES.map((s) => (
@@ -450,7 +455,7 @@ export function LeadsBoard({
                   onValueChange={(v) => v && setForm((f) => ({ ...f, status: v as LeadStatus }))}
                 >
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue>{LEAD_STATUS_LABELS[form.status]}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {STATUSES.map((s) => (

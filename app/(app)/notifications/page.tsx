@@ -8,6 +8,7 @@ import {
   NotificationsList,
   MarkAllReadButton,
 } from '@/components/notifications/notifications-list'
+import { PushOptIn } from '@/components/notifications/push-opt-in'
 
 export const dynamic = 'force-dynamic'
 
@@ -84,6 +85,8 @@ export default async function NotificationsPage({
         </div>
         <MarkAllReadButton unreadCount={unreadCount} />
       </div>
+
+      <PushOptIn />
 
       {/* Filter tabs */}
       <div className="inline-flex items-center gap-1 rounded-lg bg-muted p-1">

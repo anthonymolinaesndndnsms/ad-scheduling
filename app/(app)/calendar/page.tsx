@@ -121,7 +121,8 @@ export default async function CalendarPage({
       }),
       isAdmin
         ? prisma.user.findMany({
-            where: { role: 'EMPLOYEE', active: true },
+            // Any active team member is assignable/filterable, including the owner.
+            where: { active: true },
             orderBy: { name: 'asc' },
             select: { id: true, name: true },
           })

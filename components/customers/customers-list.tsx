@@ -97,8 +97,10 @@ export function CustomersList({
               })
             }
           >
-            <SelectTrigger className="h-10 w-full sm:w-52">
-              <SelectValue placeholder="All neighborhoods" />
+            <SelectTrigger className="h-10 w-full sm:w-52" aria-label="Filter by neighborhood">
+              <SelectValue placeholder="All neighborhoods">
+                {initialNeighborhood || 'All neighborhoods'}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={ALL}>All neighborhoods</SelectItem>

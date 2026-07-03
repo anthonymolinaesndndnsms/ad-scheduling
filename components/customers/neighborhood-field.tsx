@@ -64,7 +64,9 @@ export function NeighborhoodField({
         }}
       >
         <SelectTrigger className="w-full h-10 sm:h-8">
-          <SelectValue placeholder="Select neighborhood" />
+          <SelectValue placeholder="Select neighborhood">
+            {isOther ? 'Other…' : value || 'Select neighborhood'}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           {known.map((n) => (

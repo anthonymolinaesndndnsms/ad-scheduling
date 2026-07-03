@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
 export type FilterEmployee = { id: string; name: string }
@@ -100,41 +101,57 @@ export function PayoutFilters({ employees }: { employees: FilterEmployee[] }) {
       </div>
 
       {/* Employee + status selects */}
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <Select
-          value={activeEmployee}
-          onValueChange={(value) =>
-            pushParams({ employee: value === 'all' ? null : value })
-          }
-        >
-          <SelectTrigger className="h-10 w-full sm:h-8 sm:w-48">
-            <SelectValue placeholder="All employees" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All employees</SelectItem>
-            {employees.map((e) => (
-              <SelectItem key={e.id} value={e.id}>
-                {e.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Employee</Label>
+          <Select
+            value={activeEmployee}
+            onValueChange={(value) =>
+              pushParams({ employee: value === 'all' ? null : value })
+            }
+          >
+            <SelectTrigger className="h-10 w-full sm:h-8 sm:w-48">
+              <SelectValue placeholder="All employees">
+                {activeEmployee !== 'all'
+                  ? employees.find((e) => e.id === activeEmployee)?.name ?? 'All employees'
+                  : 'All employees'}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All employees</SelectItem>
+              {employees.map((e) => (
+                <SelectItem key={e.id} value={e.id}>
+                  {e.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-        <Select
-          value={activeStatus}
-          onValueChange={(value) =>
-            pushParams({ status: value === 'all' ? null : value })
-          }
-        >
-          <SelectTrigger className="h-10 w-full sm:h-8 sm:w-40">
-            <SelectValue placeholder="Any status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Any status</SelectItem>
-            <SelectItem value="unpaid">Unpaid owed</SelectItem>
-            <SelectItem value="paid">Paid history</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Status</Label>
+          <Select
+            value={activeStatus}
+            onValueChange={(value) =>
+              pushParams({ status: value === 'all' ? null : value })
+            }
+          >
+            <SelectTrigger className="h-10 w-full sm:h-8 sm:w-40">
+              <SelectValue placeholder="Any status">
+                {activeStatus === 'unpaid'
+                  ? 'Unpaid owed'
+                  : activeStatus === 'paid'
+                    ? 'Paid history'
+                    : 'Any status'}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Any status</SelectItem>
+              <SelectItem value="unpaid">Unpaid owed</SelectItem>
+              <SelectItem value="paid">Paid history</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
         {(activeEmployee !== 'all' ||
           activeStatus !== 'all' ||

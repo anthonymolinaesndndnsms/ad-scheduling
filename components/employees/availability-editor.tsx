@@ -280,7 +280,7 @@ function DraftFields({
           }
         >
           <SelectTrigger className="h-10 w-full sm:h-8">
-            <SelectValue />
+            <SelectValue>{DAYS[draft.dayOfWeek]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {DAYS.map((day, i) => (

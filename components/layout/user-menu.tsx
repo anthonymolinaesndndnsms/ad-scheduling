@@ -1,7 +1,8 @@
 'use client'
 
+import Link from 'next/link'
 import { signOut } from 'next-auth/react'
-import { LogOut } from 'lucide-react'
+import { LogOut, UserRound } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -51,6 +52,10 @@ export function UserMenu({ user }: { user: SessionUser }) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem render={<Link href={`/employees/${user.id}`} />}>
+          <UserRound className="mr-2 h-4 w-4" />
+          My profile
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/login' })}>
           <LogOut className="mr-2 h-4 w-4" />
           Sign out

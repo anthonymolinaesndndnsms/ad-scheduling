@@ -128,6 +128,7 @@ export function JobForm({
   const [checkingConflicts, setCheckingConflicts] = React.useState(false)
 
   const selectedService = services.find((s) => s.id === serviceTypeId)
+  const selectedEmployee = employees.find((e) => e.id === employeeId)
   const selectedCustomer =
     customerMode && customerMode !== NEW_CUSTOMER
       ? customers.find((c) => c.id === customerMode)
@@ -343,7 +344,9 @@ export function JobForm({
           <Label htmlFor="employee">Assigned employee</Label>
           <Select value={employeeId || '__none__'} onValueChange={(v) => setEmployeeId((v as string) === '__none__' ? '' : (v as string))}>
             <SelectTrigger id="employee" className="h-10 w-full md:h-9">
-              <SelectValue placeholder="Unassigned" />
+              <SelectValue placeholder="Unassigned">
+                {selectedEmployee ? selectedEmployee.name : 'Unassigned'}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="__none__">Unassigned</SelectItem>

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { SessionProvider } from '@/components/providers/session-provider'
@@ -24,6 +24,16 @@ export const metadata: Metadata = {
     template: '%s · Kids Next Door',
   },
   description: 'Team job management for neighborhood services — jobs, payouts, and scheduling',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Kids Next Door',
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#2563eb',
 }
 
 export default function RootLayout({

@@ -169,7 +169,7 @@ export function SettingsPanel({
                 <Label>Currency</Label>
                 <Select value={currency} onValueChange={(v) => v && setCurrency(v)}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue>{currency}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {CURRENCIES.map((c) => (
@@ -184,7 +184,9 @@ export function SettingsPanel({
                 <Label>Timezone</Label>
                 <Select value={timezone} onValueChange={(v) => v && setTimezone(v)}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue>
+                      {timezone.replace('America/', '').replace('Pacific/', '').replace('_', ' ')}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {TIMEZONES.map((t) => (

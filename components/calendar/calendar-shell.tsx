@@ -13,6 +13,7 @@ import {
 } from 'date-fns'
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -163,8 +164,8 @@ export function CalendarShell({
                 value={view}
                 onValueChange={(v) => pushState({ view: v as CalendarView })}
               >
-                <SelectTrigger className="h-10 w-32">
-                  <SelectValue />
+                <SelectTrigger className="h-10 w-32" aria-label="Calendar view">
+                  <SelectValue>{VIEW_LABELS[view]}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {CALENDAR_VIEWS.map((v) => (
@@ -213,69 +214,97 @@ export function CalendarShell({
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-end gap-2">
           {isAdmin && (
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Employee</Label>
+              <Select
+                value={filters.employee ?? ALL}
+                onValueChange={(v) =>
+                  pushState({ employee: !v || v === ALL ? undefined : v })
+                }
+              >
+                <SelectTrigger className="h-10 sm:h-8 min-w-40">
+                  <SelectValue placeholder="All employees">
+                    {employees.find((e) => e.id === filters.employee)?.name ?? 'All employees'}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>All employees</SelectItem>
+                  {employees.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>
+                      {e.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Service</Label>
             <Select
-              value={filters.employee ?? ALL}
+              value={filters.service ?? ALL}
               onValueChange={(v) =>
-                pushState({ employee: !v || v === ALL ? undefined : v })
+                pushState({ service: !v || v === ALL ? undefined : v })
               }
             >
               <SelectTrigger className="h-10 sm:h-8 min-w-40">
-                <SelectValue placeholder="All employees" />
+                <SelectValue placeholder="All services">
+                  {(() => {
+                    const svc = serviceTypes.find((s) => s.id === filters.service)
+                    return svc ? (
+                      <span className="flex items-center gap-1.5">
+                        <span
+                          className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: svc.color }}
+                        />
+                        {svc.name}
+                      </span>
+                    ) : (
+                      'All services'
+                    )
+                  })()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL}>All employees</SelectItem>
-                {employees.map((e) => (
-                  <SelectItem key={e.id} value={e.id}>
-                    {e.name}
+                <SelectItem value={ALL}>All services</SelectItem>
+                {serviceTypes.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    <span
+                      className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: s.color }}
+                    />
+                    {s.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          )}
+          </div>
 
-          <Select
-            value={filters.service ?? ALL}
-            onValueChange={(v) =>
-              pushState({ service: !v || v === ALL ? undefined : v })
-            }
-          >
-            <SelectTrigger className="h-10 sm:h-8 min-w-40">
-              <SelectValue placeholder="All services" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>All services</SelectItem>
-              {serviceTypes.map((s) => (
-                <SelectItem key={s.id} value={s.id}>
-                  <span
-                    className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
-                    style={{ backgroundColor: s.color }}
-                  />
-                  {s.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={(filters.status as string | undefined) ?? ALL}
-            onValueChange={(v) =>
-              pushState({ status: v === ALL ? undefined : (v as JobStatus) })
-            }
-          >
-            <SelectTrigger className="h-10 sm:h-8 min-w-36">
-              <SelectValue placeholder="All statuses" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>All statuses</SelectItem>
-              {(Object.keys(JOB_STATUS_LABELS) as JobStatus[]).map((s) => (
-                <SelectItem key={s} value={s}>
-                  {JOB_STATUS_LABELS[s]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Status</Label>
+            <Select
+              value={(filters.status as string | undefined) ?? ALL}
+              onValueChange={(v) =>
+                pushState({ status: v === ALL ? undefined : (v as JobStatus) })
+              }
+            >
+              <SelectTrigger className="h-10 sm:h-8 min-w-36">
+                <SelectValue placeholder="All statuses">
+                  {filters.status ? JOB_STATUS_LABELS[filters.status] : 'All statuses'}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL}>All statuses</SelectItem>
+                {(Object.keys(JOB_STATUS_LABELS) as JobStatus[]).map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {JOB_STATUS_LABELS[s]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Service color legend */}
