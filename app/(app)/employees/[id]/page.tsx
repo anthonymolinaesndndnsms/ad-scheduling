@@ -20,6 +20,9 @@ import {
   AvailabilityEditor,
   type AvailabilityRow,
 } from '@/components/employees/availability-editor'
+import { AdminResetPassword } from '@/components/employees/admin-reset-password'
+import { EditProfileForm } from '@/components/account/edit-profile-form'
+import { ChangePasswordForm } from '@/components/account/change-password-form'
 import { getSettings } from '@/lib/settings'
 
 export const dynamic = 'force-dynamic'
@@ -140,10 +143,29 @@ export default async function EmployeeProfilePage({
               </Button>
               <ActivateSwitch userId={employee.id} active={employee.active} />
               <RoleToggle userId={employee.id} role={employee.role} name={employee.name} />
+              {viewer.id !== employee.id && (
+                <AdminResetPassword userId={employee.id} name={employee.name} />
+              )}
             </div>
           )}
         </CardContent>
       </Card>
+
+      {/* Account: only visible on your own profile */}
+      {viewer.id === employee.id && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Account</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <EditProfileForm initialName={employee.name} initialEmail={employee.email ?? ''} />
+            <div className="border-t border-border pt-6">
+              <h3 className="mb-3 text-sm font-medium">Change password</h3>
+              <ChangePasswordForm />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Contact + right now */}
       <div className="grid gap-4 md:grid-cols-2">
